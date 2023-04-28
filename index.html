@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>도깨비한글 프리뷰</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+      body {
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      div {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+      }
+      h1 {
+        margin: 0;
+        margin-bottom: 2rem;
+      }
+      meter {
+        width: 50vw;
+      }
+      img {
+        width: calc(40vw);
+        object-fit: contain;
+        margin-right: 4rem;
+      }
+      canvas {
+        width: calc(50vw - 4rem);
+        height: calc(50vw - 4rem);
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>
+        진행도 <meter max="1"></meter>
+    </h1>
+    <div>
+        <img src="Hanmo-DokkaebiHangul.png">
+        <canvas width="256" height="256">
+    </div>
+  </body>
+  <script>
+    const $meter = document.querySelector('meter');
+    const $img = document.querySelector('img');
+    const $canvas = document.querySelector('canvas');
+    const context = $canvas.getContext('2d');
+
+    function makeIndex(page, x, y) {
+        return x + 16 * y + page * 544;
+    }
+
+    function determineStartSprite(page, x, y) {
+        const index = makeIndex(page, x, y);
+        const yIndexMap      = [0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 1, 2, 4, 4, 4, 2, 1, 3, 0];
+        const yIndexMapFinal = [5, 5, 5, 5, 5, 5, 5, 5, 6, 7, 7, 7, 6, 6, 7, 7, 7, 6, 6, 7, 5];
+        const hasFinal = index % 28 !== 0;
+        return [Math.floor(index / 28 / 21), 2 + (hasFinal ? yIndexMapFinal : yIndexMap)[Math.floor((index / 28) % 21)]];
+    }
+
+    function determineMiddleSprite(page, x, y) {
+        const index = makeIndex(page, x, y);
+        const isㄱㅋ = page === 0 || page === 15;
+        const hasFinal = index % 28 !== 0;
+        return [Math.floor((index / 28) % 21), hasFinal ? 12 : 10];
+    }
+
+    function determineFinalSprite(page, x, y) {
+        const index = makeIndex(page, x, y);
+        const hasFinal = index % 28 !== 0;
+        if (!hasFinal) {
+            return null;
+        }
+        const yIndexMap = [-1, 0, 2, 0, 2, 1, 2, 1, 2, 3, 0, 2, 1, 3, 3, 1, 2, 1, 3, 3, 1, 1];
+        return [index % 28 - 1, 14 + yIndexMap[Math.floor((index / 28) % 21) + 1]];
+    }
+
+    function* yieldCanvasPositions() {
+        for (const y of Array.from({ length: 16}).map((_, i) => i)) {
+            for (const x of Array.from({ length: 16}).map((_, i) => i)) {
+                yield [x, y];
+            }
+        }
+    }
+
+    function render(page, generator) {
+        if (!generator) {
+            return render(page, yieldCanvasPositions())
+        }
+        const current = generator.next();
+        if (current.done) {
+            return;
+        }
+        const [canvasX, canvasY] = current.value;
+        for (const [spriteX, spriteY] of [
+            determineStartSprite(page, canvasX, canvasY),
+            determineMiddleSprite(page, canvasX, canvasY),
+            determineFinalSprite(page, canvasX, canvasY),
+        ].filter(Boolean)) {
+            context.drawImage($img, 16 * spriteX, 16 * spriteY, 16, 16, 16 * canvasX, 16 * canvasY, 16, 16);
+        }
+
+        $meter.value += 1 / 256;
+
+        requestAnimationFrame(() => {
+            render(page, generator);
+        });
+    }
+
+    let page = 0;
+    render(page);
+  </script>
+</html>
