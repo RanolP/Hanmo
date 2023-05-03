@@ -33,24 +33,21 @@
         margin: 0;
         margin-bottom: 2rem;
       }
-      meter {
-        width: 50vw;
-      }
       img {
         width: calc(40vw);
         object-fit: contain;
         margin-right: 4rem;
       }
       canvas {
-        width: calc(50vw - 4rem);
-        height: calc(50vw - 4rem);
+        width: 768px;
+        height: 768px;
         border: 1px solid black;
       }
     </style>
   </head>
   <body>
     <h1>
-        진행도 <meter max="1"></meter>
+      현재 페이지 : AC00
     </h1>
     <div>
         <img src="Hanmo-DokkaebiHangul.png">
@@ -58,32 +55,25 @@
     </div>
   </body>
   <script>
-    const $meter = document.querySelector('meter');
+    const $h1 = document.querySelector('h1');
     const $img = document.querySelector('img');
     const $canvas = document.querySelector('canvas');
     const context = $canvas.getContext('2d');
 
-    function makeIndex(page, x, y) {
-        return x + 16 * y + page * 544;
-    }
-
-    function determineStartSprite(page, x, y) {
-        const index = makeIndex(page, x, y);
+    function determineStartSprite(index) {
         const yIndexMap      = [0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 1, 2, 4, 4, 4, 2, 1, 3, 0];
         const yIndexMapFinal = [5, 5, 5, 5, 5, 5, 5, 5, 6, 7, 7, 7, 6, 6, 7, 7, 7, 6, 6, 7, 5];
         const hasFinal = index % 28 !== 0;
         return [Math.floor(index / 28 / 21), 2 + (hasFinal ? yIndexMapFinal : yIndexMap)[Math.floor((index / 28) % 21)]];
     }
 
-    function determineMiddleSprite(page, x, y) {
-        const index = makeIndex(page, x, y);
-        const isㄱㅋ = page === 0 || page === 15;
+    function determineMiddleSprite(index) {
+        const isㄱㅋ = [0, 15].includes(Math.floor(index / 588));
         const hasFinal = index % 28 !== 0;
         return [Math.floor((index / 28) % 21), hasFinal ? 12 : 10];
     }
 
-    function determineFinalSprite(page, x, y) {
-        const index = makeIndex(page, x, y);
+    function determineFinalSprite(index) {
         const hasFinal = index % 28 !== 0;
         if (!hasFinal) {
             return null;
@@ -95,36 +85,56 @@
     function* yieldCanvasPositions() {
         for (const y of Array.from({ length: 16}).map((_, i) => i)) {
             for (const x of Array.from({ length: 16}).map((_, i) => i)) {
-                yield [x, y];
+                yield [x, y, x + y * 16];
             }
         }
     }
 
-    function render(page, generator) {
-        if (!generator) {
-            return render(page, yieldCanvasPositions())
-        }
-        const current = generator.next();
-        if (current.done) {
-            return;
-        }
-        const [canvasX, canvasY] = current.value;
+    const 가 = '가'.codePointAt(0);
+    const 힣 = '힣'.codePointAt(0);
+
+    function render(begin, generator) {
+      context.clearRect(0, 0, 256, 256);
+      for (const [canvasX, canvasY, index] of yieldCanvasPositions()) {
         for (const [spriteX, spriteY] of [
-            determineStartSprite(page, canvasX, canvasY),
-            determineMiddleSprite(page, canvasX, canvasY),
-            determineFinalSprite(page, canvasX, canvasY),
+            determineStartSprite(begin + index),
+            determineMiddleSprite(begin + index),
+            determineFinalSprite(begin + index),
         ].filter(Boolean)) {
             context.drawImage($img, 16 * spriteX, 16 * spriteY, 16, 16, 16 * canvasX, 16 * canvasY, 16, 16);
         }
-
-        $meter.value += 1 / 256;
-
-        requestAnimationFrame(() => {
-            render(page, generator);
-        });
+      }
     }
 
-    let page = 0;
-    render(page);
+    const pageRange = [0, Math.ceil(힣 - 가 / 256)];
+
+    let page = Number(localStorage.getItem('page'));
+    if (Number.isNaN(page)) {
+      page = 0;
+    }
+
+    function redraw() {
+      const begin = page * 256;
+      $h1.innerText = `현재 페이지 : ${(가 + begin).toString(16).toUpperCase()} (${String.fromCodePoint(가 + begin)} ~ ${String.fromCodePoint(가 + begin + 256 - 1)})`
+      render(begin);
+    }
+
+    function setPage(newPage) {
+      page = Math.min(pageRange[1], Math.max(pageRange[0], newPage));
+      localStorage.setItem('page', page.toString());
+      redraw();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') {
+        setPage(page + 1);
+      } else if (e.key === 'ArrowLeft') {
+        setPage(page - 1);
+      }
+    })
+    
+    requestAnimationFrame(() => {
+      redraw();
+    })
   </script>
 </html>
