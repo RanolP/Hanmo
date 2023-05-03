@@ -68,9 +68,10 @@
     }
 
     function determineMiddleSprite(index) {
-        const isㄱㅋ = [0, 15].includes(Math.floor(index / 588));
+        const isㄱㄲㅋ = [0, 1, 15].includes(Math.floor(index / 588));
         const hasFinal = index % 28 !== 0;
-        return [Math.floor((index / 28) % 21), hasFinal ? 12 : 10];
+        const yIndexMap = [[11, 10], [13, 12]]
+        return [Math.floor((index / 28) % 21), yIndexMap[+hasFinal][+isㄱㄲㅋ]];
     }
 
     function determineFinalSprite(index) {
@@ -126,9 +127,9 @@
     }
 
     window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight') {
+      if (e.key === 'ArrowRight' || e.key === 'd') {
         setPage(page + 1);
-      } else if (e.key === 'ArrowLeft') {
+      } else if (e.key === 'ArrowLeft' || e.key === 'a') {
         setPage(page - 1);
       }
     })
