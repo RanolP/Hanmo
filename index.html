@@ -38,20 +38,32 @@
         object-fit: contain;
         margin-right: 4rem;
       }
+      section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
       canvas {
         width: 768px;
         height: 768px;
         border: 1px solid black;
       }
+      button {
+        padding: 1.5rem 2rem;
+        border: none;
+        margin-top: 1rem;
+        font-size: 1.5rem;
+      }
     </style>
   </head>
   <body>
-    <h1>
-      현재 페이지 : AC00
-    </h1>
+    <h1>현재 페이지 : AC00</h1>
     <div>
-        <img src="Hanmo-DokkaebiHangul.png">
-        <canvas width="256" height="256">
+      <section>
+        <img src="Hanmo-DokkaebiHangul.png" />
+        <button onclick="download()">현재 페이지 가이드 지우고 내려받기</button>
+      </section>
+      <canvas width="256" height="256"></canvas>
     </div>
   </body>
   <script>
@@ -61,53 +73,100 @@
     const context = $canvas.getContext('2d');
 
     function determineStartSprite(index) {
-        const yIndexMap      = [0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 1, 2, 4, 4, 4, 2, 1, 3, 0];
-        const yIndexMapFinal = [5, 5, 5, 5, 5, 5, 5, 5, 6, 7, 7, 7, 6, 6, 7, 7, 7, 6, 6, 7, 5];
-        const hasFinal = index % 28 !== 0;
-        return [Math.floor(index / 28 / 21), 2 + (hasFinal ? yIndexMapFinal : yIndexMap)[Math.floor((index / 28) % 21)]];
+      const yIndexMap = [
+        0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3, 1, 2, 4, 4, 4, 2, 1, 3, 0,
+      ];
+      const yIndexMapFinal = [
+        5, 5, 5, 5, 5, 5, 5, 5, 6, 7, 7, 7, 6, 6, 7, 7, 7, 6, 6, 7, 5,
+      ];
+      const hasFinal = index % 28 !== 0;
+      return [
+        Math.floor(index / 28 / 21),
+        2 +
+          (hasFinal ? yIndexMapFinal : yIndexMap)[
+            Math.floor((index / 28) % 21)
+          ],
+      ];
     }
 
     function determineMiddleSprite(index) {
-        const isㄱㄲㅋ = [0, 1, 15].includes(Math.floor(index / 588));
-        const hasFinal = index % 28 !== 0;
-        const yIndexMap = [[11, 10], [13, 12]]
-        return [Math.floor((index / 28) % 21), yIndexMap[+hasFinal][+isㄱㄲㅋ]];
+      const isㄱㄲㅋ = [0, 1, 15].includes(Math.floor(index / 588));
+      const hasFinal = index % 28 !== 0;
+      const yIndexMap = [
+        [11, 10],
+        [13, 12],
+      ];
+      return [Math.floor((index / 28) % 21), yIndexMap[+hasFinal][+isㄱㄲㅋ]];
     }
 
     function determineFinalSprite(index) {
-        const hasFinal = index % 28 !== 0;
-        if (!hasFinal) {
-            return null;
-        }
-        const yIndexMap = [-1, 0, 2, 0, 2, 1, 2, 1, 2, 3, 0, 2, 1, 3, 3, 1, 2, 1, 3, 3, 1, 1];
-        return [index % 28 - 1, 14 + yIndexMap[Math.floor((index / 28) % 21) + 1]];
+      const hasFinal = index % 28 !== 0;
+      if (!hasFinal) {
+        return null;
+      }
+      const yIndexMap = [
+        -1, 0, 2, 0, 2, 1, 2, 1, 2, 3, 0, 2, 1, 3, 3, 1, 2, 1, 3, 3, 1, 1,
+      ];
+      return [
+        (index % 28) - 1,
+        14 + yIndexMap[Math.floor((index / 28) % 21) + 1],
+      ];
     }
 
     function* yieldCanvasPositions() {
-        for (const y of Array.from({ length: 16}).map((_, i) => i)) {
-            for (const x of Array.from({ length: 16}).map((_, i) => i)) {
-                yield [x, y, x + y * 16];
-            }
+      for (const y of Array.from({ length: 16 }).map((_, i) => i)) {
+        for (const x of Array.from({ length: 16 }).map((_, i) => i)) {
+          yield [x, y, x + y * 16];
         }
+      }
     }
 
     const 가 = '가'.codePointAt(0);
     const 힣 = '힣'.codePointAt(0);
 
-    function render(begin, generator) {
+    function render(begin, downloadMode) {
       context.clearRect(0, 0, 256, 256);
       for (const [canvasX, canvasY, index] of yieldCanvasPositions()) {
+        if (가 + begin + index > 힣) {
+          break;
+        }
         for (const [spriteX, spriteY] of [
-            determineStartSprite(begin + index),
-            determineMiddleSprite(begin + index),
-            determineFinalSprite(begin + index),
+          determineStartSprite(begin + index),
+          determineMiddleSprite(begin + index),
+          determineFinalSprite(begin + index),
         ].filter(Boolean)) {
-            context.drawImage($img, 16 * spriteX, 16 * spriteY, 16, 16, 16 * canvasX, 16 * canvasY, 16, 16);
+          context.drawImage(
+            $img,
+            16 * spriteX,
+            16 * spriteY,
+            16,
+            16,
+            16 * canvasX,
+            16 * canvasY,
+            16,
+            16,
+          );
         }
       }
     }
 
-    const pageRange = [0, Math.ceil(힣 - 가 / 256)];
+    function download() {
+      for (const [canvasX, canvasY, index] of yieldCanvasPositions()) {
+        context.clearRect(16 * canvasX, 16 * canvasY, 1, 16);
+        context.clearRect(16 * canvasX, 16 * canvasY, 16, 1);
+        context.clearRect(16 * canvasX + 15, 16 * canvasY, 1, 16);
+        context.clearRect(16 * canvasX, 16 * canvasY + 15, 16, 1);
+      }
+      const aTag = document.createElement('a');
+      aTag.href = $canvas.toDataURL('image/png');
+      aTag.download =
+        'unicode_page_' +
+        ((가 + page * 256) / 0x100).toString(16).toLowerCase() +
+        '.png';
+      aTag.click();
+    }
+
+    const pageRange = [0, Math.ceil((힣 - 가) / 256) - 1];
 
     let page = Number(localStorage.getItem('page'));
     if (Number.isNaN(page)) {
@@ -116,7 +175,13 @@
 
     function redraw() {
       const begin = page * 256;
-      $h1.innerText = `현재 페이지 : ${(가 + begin).toString(16).toUpperCase()} (${String.fromCodePoint(가 + begin)} ~ ${String.fromCodePoint(가 + begin + 256 - 1)})`
+
+      const beginChar = String.fromCodePoint(가 + begin);
+      const endChar = String.fromCodePoint(Math.min(힣, 가 + begin + 256 - 1));
+
+      $h1.innerText = `현재 페이지 : ${(가 + begin)
+        .toString(16)
+        .toUpperCase()} (${beginChar} ~ ${endChar})`;
       render(begin);
     }
 
@@ -132,10 +197,14 @@
       } else if (e.key === 'ArrowLeft' || e.key === 'a') {
         setPage(page - 1);
       }
-    })
-    
-    requestAnimationFrame(() => {
+    });
+
+    if ($img.complete) {
       redraw();
-    })
+    } else {
+      $img.addEventListener('load', () => {
+        redraw();
+      });
+    }
   </script>
 </html>
