@@ -61,6 +61,7 @@
     <div>
       <section>
         <img src="Hanmo-DokkaebiHangul.png" />
+        <button id="reload" onclick="reloadImage()">새로고침</button>
         <button onclick="download()">현재 페이지 가이드 지우고 내려받기</button>
       </section>
       <canvas width="256" height="256"></canvas>
@@ -69,6 +70,7 @@
   <script>
     const $h1 = document.querySelector('h1');
     const $img = document.querySelector('img');
+    const $reloadBtn = document.getElementById('reload');
     const $canvas = document.querySelector('canvas');
     const context = $canvas.getContext('2d');
 
@@ -148,6 +150,19 @@
           );
         }
       }
+    }
+
+    function reloadImage() {
+      const nextUrl = new URL($img.src);
+      nextUrl.searchParams.set('t', +new Date());
+      $img.src = nextUrl;
+      $reloadBtn.disabled = true;
+      $reloadBtn.innerHTML = '이미지 가져오는 중...';
+      fetch($img.src, { cache: 'reload', mode: 'no-cors' }).then(() => {
+        redraw();
+        $reloadBtn.disabled = false;
+        $reloadBtn.innerHTML = '새로고침';
+      });
     }
 
     function download() {
