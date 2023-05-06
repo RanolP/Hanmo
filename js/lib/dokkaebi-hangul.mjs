@@ -28,10 +28,14 @@ export function chooseInitial(초성, 중성, 종성) {
   } else {
     if ('ㅏㅐㅑㅒㅓㅔㅕㅖㅣ'.includes(중성)) {
       return [초성xPosition, baseSpriteY + 5];
-    } else if ('ㅗㅛㅜㅠㅡ'.includes(중성)) {
+    } else if ('ㅗㅛ'.includes(중성)) {
       return [초성xPosition, baseSpriteY + 6];
-    } /* ㅘㅙㅚㅢㅝㅞㅟ */ else {
+    } else if ('ㅜㅠㅡ'.includes(중성)) {
       return [초성xPosition, baseSpriteY + 7];
+    } else if ('ㅘㅙㅚ'.includes(중성)) {
+      return [초성xPosition, baseSpriteY + 8];
+    } /* ㅝㅞㅟㅢ */ else {
+      return [초성xPosition, baseSpriteY + 9];
     }
   }
 }
@@ -44,7 +48,7 @@ export function chooseInitial(초성, 중성, 종성) {
  */
 export function chooseMedium(초성, 중성, 종성) {
   const 중성xPosition = 중성List.indexOf(중성);
-  const baseSpriteY = 10;
+  const baseSpriteY = 12;
   if (종성 === ' ') {
     if ('ㄱㄲㅋ'.includes(초성)) {
       return [중성xPosition, baseSpriteY + 0];
@@ -71,7 +75,7 @@ export function chooseFinal(초성, 중성, 종성) {
     return null;
   }
   const 종성xPosition = 종성List.indexOf(종성) - 1;
-  const baseSpriteY = 14;
+  const baseSpriteY = 16;
   if ('ㅏㅑㅘ'.includes(중성)) {
     return [종성xPosition, baseSpriteY + 0];
   } else if ('ㅓㅕㅚㅝㅟㅢㅣ'.includes(중성)) {
