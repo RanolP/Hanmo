@@ -14,9 +14,13 @@ RUN() {
 case "$1" in
 i | install)
     RUN cargo +nightly install --git https://github.com/mc-kor/hanmo-combinator
+    RUN '(cd www; npm install)'
 ;;
 p | preview)
     RUN '(cd www; npm run preview)'
+;;
+build-web)
+    RUN '(cd www; npm run build)'
 ;;
 *)
     echo "unknown command '$0 $1'"
