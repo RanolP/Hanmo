@@ -24,8 +24,8 @@ build-web)
 ;;
 *)
     echo "unknown command '$0 $1'"
-    echo "$0 i or $0 install - install required toolchain"
-    echo "$0 w or $0 watch   - watch font files for compile"
-    echo "$0 p or $0 preview - start preview server"
+    echo "$0 i or install - install required toolchain"
+    echo "$0 p or preview - start preview server"
+    echo "$0 build-web    - build website, just for ci"
 ;;
 esac
