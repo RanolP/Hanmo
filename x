@@ -20,7 +20,7 @@ p | preview)
     RUN '(cd www; npm run preview)'
 ;;
 build-web)
-    RUN '(cd www; npm run build)'
+    RUN '(cd www; npm run build && npm run bundle)'
 ;;
 *)
     echo "unknown command '$0 $1'"

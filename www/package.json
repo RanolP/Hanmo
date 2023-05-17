@@ -12,7 +12,8 @@
     "watch-web": "nodemon -w src -e ts -x 'npm run build'",
     "watch-font": "nodemon -w ../src -e bmp,toml -x 'npm run copy-font'",
     "build-js": "nanobundle build --no-sourcemap --no-legal-comments --no-dts",
-    "build": "concurrently npm:build-js npm:copy-font"
+    "build": "concurrently npm:build-js npm:copy-font",
+    "bundle": "mkdir bundle; cp -r dist bundle/dist && cp index.html bundle/index.html && cp index.html bundle/404.html && cp -r css bundle"
   },
   "dependencies": {
     "nanostores": "^0.8.1"
