@@ -1,0 +1,14 @@
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  margin: 1rem;
+  border-radius: 0.5rem;
+  padding: 1rem 2rem;
+  background-color: aliceblue;
+}
+
+section.hidden {
+  display: none;
+}

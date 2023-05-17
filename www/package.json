@@ -1,0 +1,27 @@
+{
+  "name": "hanmo-preview",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/main.js",
+  "exports": "./dist/main.js",
+  "scripts": {
+    "preview": "concurrently npm:serve npm:watch-web npm:watch-font",
+    "copy-font": "(cd ..; hanmo-combinator && cp -r dist/ www/)",
+    "serve": "serve --single .",
+    "watch-web": "nodemon -w src -e ts -x 'npm run build'",
+    "watch-font": "nodemon -w ../src -e bmp,toml -x 'npm run copy-font'",
+    "build-js": "nanobundle build --no-sourcemap --no-legal-comments --no-dts",
+    "build": "concurrently npm:build-js npm:copy-font"
+  },
+  "dependencies": {
+    "nanostores": "^0.8.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.0.1",
+    "nanobundle": "^1.6.0",
+    "nodemon": "^2.0.22",
+    "serve": "^14.2.0",
+    "typescript": "^5.0.4"
+  }
+}

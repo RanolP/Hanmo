@@ -1,0 +1,19 @@
+nav {
+  width: 100vw;
+  font-size: 2rem;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+nav > a {
+  text-decoration: none;
+  color: unset;
+  padding: 1rem 2rem;
+  margin: 0 1rem;
+}
+
+nav > a.active {
+  border-bottom: 2px solid black;
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/index.css" />
+    <title>한모</title>
+  </head>
+  <body>
+    <nav>
+      <a href="group">묶어보기</a>
+      <a href="playground">놀이터</a>
+    </nav>
+    <main>
+      <section id="group" class="hidden">묶어보기</section>
+      <section id="playground" class="hidden">
+        <input id="playground-input" />
+        <canvas id="playground-view"></canvas>
+      </section>
+    </main>
+  </body>
+  <script type="importmap">
+    {
+      "imports": {
+        "nanostores": "https://cdn.skypack.dev/pin/nanostores@v0.8.1-NjzvsSXz3IPXvqaNGb47/mode=imports,min/optimized/nanostores.js"
+      }
+    }
+  </script>
+  <script type="module" src="dist/main.js"></script>
+</html>
