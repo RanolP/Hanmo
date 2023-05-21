@@ -1,4 +1,35 @@
 #playground-input {
   border: none;
   font-size: 3rem;
+  font-family: inherit;
+}
+
+#playground-reload {
+  border: none;
+  font-size: 2rem;
+  padding: 1rem 2rem;
+  margin: 1rem;
+}
+
+#playground-view-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, var(--playground-grid-cell-size));
+  width: 100%;
+}
+
+#playground-view {
+  grid-column: 1/-1;
+  width: 100%;
+
+  border: var(--playground-grid-border) solid red;
+  border-right: none;
+  border-bottom: none;
+}
+
+:root {
+  --playground-grid-font-size: calc(4 * 16px);
+  --playground-grid-border: 2px;
+  --playground-grid-cell-size: calc(
+    var(--playground-grid-border) + var(--playground-grid-font-size)
+  );
 }

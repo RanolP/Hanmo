@@ -15,15 +15,21 @@
     <main>
       <section id="group" class="hidden">묶어보기</section>
       <section id="playground" class="hidden">
-        <input id="playground-input" />
-        <canvas id="playground-view"></canvas>
+        <textarea id="playground-input"></textarea>
+        <button id="playground-reload">폰트 새로고침</button>
+        <div id="playground-view-wrapper">
+          <canvas id="playground-view"></canvas>
+        </div>
       </section>
     </main>
   </body>
   <script type="importmap">
     {
       "imports": {
-        "nanostores": "https://cdn.skypack.dev/pin/nanostores@v0.8.1-NjzvsSXz3IPXvqaNGb47/mode=imports,min/optimized/nanostores.js"
+        "@nanostores/persistent": "https://cdn.skypack.dev/@nanostores/persistent@0.8.0",
+        "@nanostores/query": "https://cdn.skypack.dev/@nanostores/query@0.1.1",
+        "@nanostores/router": "https://cdn.skypack.dev/@nanostores/router@0.9.1",
+        "nanostores": "https://cdn.skypack.dev/nanostores@0.8.1"
       }
     }
   </script>

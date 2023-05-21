@@ -16,6 +16,9 @@
     "bundle": "mkdir bundle; cp -r dist bundle/dist && cp index.html bundle/index.html && cp index.html bundle/404.html && cp -r css bundle"
   },
   "dependencies": {
+    "@nanostores/persistent": "^0.8.0",
+    "@nanostores/query": "^0.1.1",
+    "@nanostores/router": "^0.9.1",
     "nanostores": "^0.8.1"
   },
   "devDependencies": {

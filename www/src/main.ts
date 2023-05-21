@@ -1,1 +1,1 @@
-import './views/route.js';
+import './views/index.js';

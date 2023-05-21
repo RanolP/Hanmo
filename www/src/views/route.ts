@@ -1,6 +1,18 @@
-import { atom } from 'nanostores';
+import { createRouter } from '@nanostores/router';
 
-const hrefAtom = atom(window.location.pathname);
+export const router = createRouter({
+  group: '/group',
+  playground: '/playground',
+});
+
+router.subscribe((page) => {
+  if (!page) {
+    router.open('/playground', true);
+    return;
+  }
+  activeSection(page.route);
+  updateNavLinkActivity((route) => route.endsWith(page.route));
+});
 
 function activeSection(id: string) {
   for (const section of document.querySelectorAll('section')) {
@@ -23,19 +35,3 @@ function updateNavLinkActivity(matcher: (route: string) => boolean) {
     }
   }
 }
-
-hrefAtom.subscribe((value) => {
-  switch (value) {
-    case '/group': {
-      activeSection('group');
-      updateNavLinkActivity((route) => route.endsWith('group'));
-      break;
-    }
-    default:
-    case '/playground': {
-      activeSection('playground');
-      updateNavLinkActivity((route) => route.endsWith('playground'));
-      break;
-    }
-  }
-});
