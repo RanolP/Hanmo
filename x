@@ -14,7 +14,7 @@ RUN() {
 case "$1" in
 i | install)
     RUN mkdir .bin 2>/dev/null || true
-    RUN curl https://github.com/mc-kor/hanmo-combinator/releases/download/main/hanmo-combinator > .bin/hanmo-combinator
+    RUN curl https://github.com/mc-kor/hanmo-combinator/releases/download/main/hanmo-combinator -L -o ./.bin/hanmo-combinator
     RUN chmod +x .bin/hanmo-combinator
     RUN '(cd www; npm install)'
 ;;
