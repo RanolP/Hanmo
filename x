@@ -49,7 +49,7 @@ download-corpus)
     asset_index_url=`echo $GLOBAL_RETURN | jq '.assetIndex.url'`
     RUN_WITH_RETURN "curl $asset_index_url"
     asset_hash=`echo $GLOBAL_RETURN | jq -r '.objects."minecraft/lang/ko_kr.json".hash'`
-    echo hash: $asset_hash
+    echo "hash ${asset_hash:0:2}"
     RUN "mkdir .hanmo 2>/dev/null || true"
     RUN "curl https://resources.download.minecraft.net/${asset_hash:0:2}/$asset_hash -o ./.hanmo/ko_KR.json"
 ;;
