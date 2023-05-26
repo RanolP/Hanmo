@@ -13,7 +13,8 @@
     "watch-font": "nodemon -w ../src -e bmp,toml -x 'npm run copy-font'",
     "build-js": "nanobundle build --no-sourcemap --no-legal-comments --no-dts",
     "build": "concurrently npm:build-js npm:copy-font",
-    "bundle": "mkdir bundle; cp -r dist bundle/dist && cp index.html bundle/index.html && cp index.html bundle/404.html && cp -r css bundle"
+    "bundle": "mkdir bundle; cp -r dist bundle/dist && cp index.html bundle/index.html && cp index.html bundle/404.html && cp -r css bundle",
+    "copy-to-resourcepack": "(cd ..; dotenv -e .env.local -- bash -c 'cp \"dist/out.zip\" \"$RESOURCE_PACK_PATH/hanmo.zip\"')"
   },
   "dependencies": {
     "@nanostores/persistent": "^0.8.0",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "concurrently": "^8.0.1",
+    "dotenv-cli": "^7.2.1",
     "nanobundle": "^1.6.0",
     "nodemon": "^2.0.22",
     "serve": "^14.2.0",

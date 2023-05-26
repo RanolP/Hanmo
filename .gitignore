@@ -1,4 +1,5 @@
 dist/
 www/bundle/
 node_modules/
-.bin/
+.hanmo/
+.env*
