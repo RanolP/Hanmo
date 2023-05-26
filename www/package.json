@@ -7,7 +7,7 @@
   "exports": "./dist/main.js",
   "scripts": {
     "preview": "concurrently npm:serve npm:watch-web npm:watch-font",
-    "copy-font": "(cd ..; .bin/hanmo-combinator && cp -r dist/ www/)",
+    "copy-font": "(cd ..; .hanmo/hanmo-combinator && cp -r dist/ www/)",
     "serve": "serve --single .",
     "watch-web": "nodemon -w src -e ts -x 'npm run build'",
     "watch-font": "nodemon -w ../src -e bmp,toml -x 'npm run copy-font'",
