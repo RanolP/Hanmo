@@ -14,6 +14,8 @@ jobs:
         run: ./x install-tool
       - name: Build
         run: ./x build
+      - name: Download Corpus
+        run: ./x download-corpus
       - name: Coverage Report
         id: report
         run: |
