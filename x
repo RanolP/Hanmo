@@ -6,7 +6,7 @@ GRAY='\033[1;90m'
 GLOBAL_RETURN=
 
 FAKERUN() {
-    echo -e "$YELLOW\$$RESET $GRAY$@$RESET"
+    echo -e "$YELLOW\$$RESET $GRAY$@$RESET" >&2
 }
 RUN() {
     FAKERUN $@
@@ -19,12 +19,18 @@ RUN_WITH_RETURN() {
 
 case "$1" in
 i | install)
+    RUN "$0 install-tool"
+    RUN "$0 install-web"
+;;
+install-tool)
     RUN mkdir .hanmo 2>/dev/null || true
     RUN curl https://github.com/mc-kor/hanmo-combinator/releases/download/main/hanmo-combinator -L -o ./.hanmo/hanmo-combinator
     RUN chmod +x .hanmo/hanmo-combinator
+;;
+install-web)
     RUN '(cd www; npm install)'
 ;;
-install-raw)
+install-tool-raw)
     RUN cargo +nightly install --git https://github.com/mc-kor/hanmo-combinator
     RUN '(cd www; npm install)'
 ;;
