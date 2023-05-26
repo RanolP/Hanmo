@@ -25,7 +25,4 @@ jobs:
       - name: Comment
         uses: peter-evans/commit-comment@v2
         with:
-          sha: 843dea1cc2e721163c20a5c876b5b155f7f3aa75
           body: ${{ steps.report.outputs.body }}
-          path: path/to/file.txt
-          position: 1
