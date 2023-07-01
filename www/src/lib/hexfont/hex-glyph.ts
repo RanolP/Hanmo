@@ -21,6 +21,20 @@ export class HexGlyph {
     y: number,
     scale: number = 1,
   ) {
+    ctx.fillStyle = 'black';
+    for (const sx of range(15)) {
+      for (const sy of range(15)) {
+        if (this.shouldPaint(sx, sy)) {
+          ctx.fillRect(
+            x + scale * (sx + 1),
+            y + scale * (sy + 1),
+            scale,
+            scale,
+          );
+        }
+      }
+    }
+    ctx.fillStyle = 'white';
     for (const sx of range(16)) {
       for (const sy of range(16)) {
         if (this.shouldPaint(sx, sy)) {

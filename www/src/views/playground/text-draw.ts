@@ -33,14 +33,16 @@ dependencies.subscribe(
           FONT_SIZE,
         );
         if (x % 2 !== y % 2) {
-          ctx.fillStyle = '#b3dbff';
-          ctx.fillRect(
-            (FONT_SIZE + BORDER_WIDTH) * x,
-            (FONT_SIZE + BORDER_WIDTH) * y,
-            FONT_SIZE,
-            FONT_SIZE,
-          );
+          ctx.fillStyle = '#a2a2d2';
+        } else {
+          ctx.fillStyle = '#b2b2b2';
         }
+        ctx.fillRect(
+          (FONT_SIZE + BORDER_WIDTH) * x,
+          (FONT_SIZE + BORDER_WIDTH) * y,
+          FONT_SIZE,
+          FONT_SIZE,
+        );
         const idx = x + y * canvasGlyphPerRow;
         if (idx < inputText.length && font) {
           const ch = inputText.codePointAt(idx)!;
