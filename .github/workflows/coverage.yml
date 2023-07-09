@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  pages:
+  coverage:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,7 +18,7 @@ jobs:
             scripts/coverage.mjs
             src
             x
-          fetch-depth: 1
+          fetch-depth: 2
       - name: Install
         run: ./x install-tool
       - name: Build
