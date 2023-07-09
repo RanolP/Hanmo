@@ -1,15 +1,40 @@
 import { promises as fs } from 'node:fs';
 
-const fontSrc = await fs.readFile('./dist/out-complete-only.hex', {
-  encoding: 'ascii',
-});
-const font = new Set(
-  fontSrc
-    .trim()
-    .split('\n')
-    .map((x) => String.fromCodePoint(Number('0x' + x.split(':')[0]))),
-);
+async function parseFont(path) {
+  const fontSrc = await fs.readFile(path, { encoding: 'ascii' });
+  const font = Object.fromEntries(
+    fontSrc
+      .trim()
+      .split('\n')
+      .map((x) => {
+        const [key, value] = x.split(':');
+        return [String.fromCodePoint(Number('0x' + key)), value];
+      }),
+  );
+  return font;
+}
 
+const fontOld = await parseFont('./.previous/dist/out-complete-only.hex');
+const fontCurrent = await parseFont('./dist/out-complete-only.hex');
+const fontDiff = Array.from(
+  new Set([...Object.keys(fontOld), ...Object.keys(fontCurrent)]),
+).reduce(
+  (acc, curr) => {
+    if (curr in fontCurrent) {
+      if (curr in fontOld) {
+        if (fontCurrent[curr] !== fontOld[curr]) {
+          acc.changed.push(curr);
+        }
+      } else {
+        acc.added.push(curr);
+      }
+    } else {
+      acc.deleted.push(curr);
+    }
+    return acc;
+  },
+  { deleted: [], changed: [], added: [] },
+);
 const jsonSrc = await fs.readFile('./.hanmo/ko_KR.json', { encoding: 'utf8' });
 const texts = Object.entries(JSON.parse(jsonSrc));
 
@@ -18,7 +43,7 @@ const textPartiallySupported = [];
 const textUnsupported = [];
 const frequencyMap = {};
 for (const [key, text] of texts) {
-  let previousSupported = font.has(text[0]);
+  let previousSupported = text[0] in fontCurrent;
   let partialSupport = false;
   for (const ch of text) {
     if (
@@ -27,13 +52,13 @@ for (const [key, text] of texts) {
     ) {
       continue;
     }
-    if (!font.has(ch)) {
+    if (!(ch in fontCurrent)) {
       frequencyMap[ch] = (frequencyMap[ch] ?? 0) + 1;
     }
     if (partialSupport) {
       continue;
     }
-    const currentSupported = font.has(ch);
+    const currentSupported = ch in fontCurrent;
     if (previousSupported !== currentSupported) {
       textPartiallySupported.push(text);
       partialSupport = true;
@@ -50,14 +75,16 @@ for (const [key, text] of texts) {
   }
 }
 
-const charsMade = font.size;
+const charsMade = Object.keys(fontCurrent).length;
 const charsTotal = '힣'.codePointAt(0) - '가'.codePointAt(0);
 
 console.log(
   `
 ## Hanmo Coverage Report
 
-### Hangul Syllable (${percent(charsMade, charsTotal)})
+### Hangul Syllable (${percent(charsMade, charsTotal)}${
+    fontDiff.size > 0 ? ', +' + fontDiff.size : ''
+  })
 
 🟢 \`  SUPPORTED\` ${charsMade} of ${charsTotal}
 🔴 \`UNSUPPORTED\` ${charsTotal - charsMade} of ${charsTotal}

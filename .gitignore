@@ -3,3 +3,4 @@ www/bundle/
 node_modules/
 .hanmo/
 .env*
+.previous/

@@ -5,8 +5,11 @@ GRAY='\033[1;90m'
 
 GLOBAL_RETURN=
 
+ECHO() {
+    echo -e $@ >&2
+}
 FAKERUN() {
-    echo -e "$YELLOW\$$RESET $GRAY$@$RESET" >&2
+    ECHO "$YELLOW\$$RESET $GRAY$@$RESET"
 }
 RUN() {
     FAKERUN $@
@@ -53,7 +56,19 @@ download-corpus)
     RUN "curl https://resources.download.minecraft.net/`echo $asset_hash | awk '{ print substr($1, 0, 2) }'`/$asset_hash -o ./.hanmo/ko_KR.json"
 ;;
 c | coverage)
+    if git diff-files --quiet; then
+        ECHO "working directory clean; diffing with previous commit."
+        RUN "git worktree add ./.previous -b previous HEAD^ --no-checkout"
+    else
+        ECHO "working directory dirty; diffing with current commit."
+        RUN "git worktree add ./.previous -b previous HEAD --no-checkout"
+    fi
+    RUN "git -C ./.previous checkout HEAD src"
+    RUN "(cd ./.previous/ && ../.hanmo/hanmo-combinator)"
     RUN 'node scripts/coverage.mjs'
+    RUN "git worktree remove ./.previous -f"
+    RUN "git worktree prune"
+    RUN "git branch -D previous >&2"
 ;;
 build)
     RUN ./.hanmo/hanmo-combinator
