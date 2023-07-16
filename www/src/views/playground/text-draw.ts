@@ -8,9 +8,9 @@ import { fontAtom } from '../../lib/hanmo-preview/data-sources/hex-font.js';
 const rowCountAtom = computed(
   [canvasGlyphPerRowAtom, inputTextAtom],
   (canvasGlyphPerRow, inputText) =>
-    Math.floor(
-      inputText.length / (canvasGlyphPerRow === 0 ? 1 : canvasGlyphPerRow),
-    ) + 1,
+    inputText.length === 0 || canvasGlyphPerRow === 0
+      ? 1
+      : Math.ceil(inputText.length / canvasGlyphPerRow),
 );
 
 rowCountAtom.subscribe((rowCount) => {
